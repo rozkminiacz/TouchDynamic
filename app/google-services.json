@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "835628370080",
+    "firebase_url": "https://touchdynamic-a1061.firebaseio.com",
+    "project_id": "touchdynamic-a1061",
+    "storage_bucket": "touchdynamic-a1061.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835628370080:android:7fccd0621db43adf",
+        "android_client_info": {
+          "package_name": "com.example.michalik.touchdynamic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "835628370080-nmdmehqiatb49b0kl9uck2vd3mge4n5u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.michalik.touchdynamic",
+            "certificate_hash": "9FF5B1D4DE2FE01D5661D45A2F1C701F7110E797"
+          }
+        },
+        {
+          "client_id": "835628370080-lntgokbdalurqvr0asel4t2lgm8bk65r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLVkZHogYftymOdudqzLEp_T2PYifggU4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "835628370080-lntgokbdalurqvr0asel4t2lgm8bk65r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

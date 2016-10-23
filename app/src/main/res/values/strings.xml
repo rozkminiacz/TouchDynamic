@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TouchDynamic</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lorem" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur vehicula neque id hendrerit. Fusce ullamcorper ornare felis. Nullam vulputate venenatis sem eu facilisis. Suspendisse porttitor eget quam vitae semper. Donec aliquam orci at pulvinar tempus. Phasellus gravida blandit urna, id volutpat purus egestas non. Donec in ultricies quam. In arcu urna, fringilla vitae sapien sed, mollis ullamcorper purus. Aliquam pharetra dolor lectus, fringilla finibus enim vehicula eget. Pellentesque quis condimentum arcu. Quisque quis dui ullamcorper purus lacinia ultricies blandit at libero. Aliquam erat volutpat. </string>
+</resources>
