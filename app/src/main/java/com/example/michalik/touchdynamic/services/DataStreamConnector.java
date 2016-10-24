@@ -4,9 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.michalik.touchdynamic.App;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -22,12 +22,16 @@ public class DataStreamConnector {
     //send to server
     //send file to endpoint
     private static final String TAG = DataStreamConnector.class.getSimpleName();
+    private StorageReference firebaseReference;
     private UploadListener uploadListener;
 
+    public DataStreamConnector(){
+        this.firebaseReference = FirebaseStorage.getInstance().getReference();
+    }
+
     public void sendFileToCloud(File csvFile){
-        final String endpoint = "http://askjdaskjdlksaj.com/touch/fileupload";
         Uri uri = Uri.fromFile(csvFile);
-        StorageReference storageReference = App.getInstance().storageReference.child("data/"+csvFile.getName());
+        StorageReference storageReference = firebaseReference.child("data/"+csvFile.getName());
         storageReference.putFile(uri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override

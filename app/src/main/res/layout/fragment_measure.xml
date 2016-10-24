@@ -5,29 +5,11 @@
     tools:context="com.example.michalik.touchdynamic.fragment.MeasureFragment">
 
     <ImageView
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_width="250dp"
         android:id="@+id/fragment_measure_field"
         android:background="@color/colorPrimary"
         android:layout_margin="70dp"/>
-
-    <Button
-        android:text="Start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/fragment_measure_start"
-        android:elevation="0dp"
-        style="@style/Widget.AppCompat.Button" />
-
-    <Button
-        android:text="Settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/fragment_measure_settings" />
 
     <Button
         android:text="Reset"
@@ -38,11 +20,29 @@
         android:id="@+id/fragment_measure_reset" />
 
     <Button
+        android:text="Start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_measure_start"
+        android:elevation="0dp"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/fragment_measure_reset" />
+
+    <Button
         android:text="Send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/fragment_measure_send"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/fragment_measure_settings"
-        android:id="@+id/fragment_measure_send" />
+        android:layout_toEndOf="@+id/fragment_measure_start" />
+
+    <Button
+        android:text="Settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_measure_settings"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

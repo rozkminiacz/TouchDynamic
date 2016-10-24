@@ -1,7 +1,9 @@
 package com.example.michalik.touchdynamic.services;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.michalik.touchdynamic.objects.TouchMeasurement;
 
@@ -13,14 +15,15 @@ import java.util.List;
  */
 
 public class TouchService implements View.OnTouchListener{
-    View aquisitionArea;
+    public static final String TAG = TouchService.class.getSimpleName();
+    ImageView aquisitionArea;
     private List<TouchMeasurement> touchMeasurementList;
 
     public List<TouchMeasurement> getTouchMeasurementList() {
         return touchMeasurementList;
     }
 
-    public TouchService(View aquisitionArea) {
+    public TouchService(ImageView aquisitionArea) {
         this.aquisitionArea = aquisitionArea;
     }
     public void init(){
@@ -30,14 +33,14 @@ public class TouchService implements View.OnTouchListener{
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_UP:
-                touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_UP));
-                break;
-            case MotionEvent.ACTION_DOWN:
-                touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_DOWN));
-                break;
+        Log.d(TAG, "onTouch: ");
+
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_UP));
         }
-        return false;
+        else if(event.getAction() == MotionEvent.ACTION_DOWN){
+            touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_DOWN));
+        }
+        return true;
     }
 }

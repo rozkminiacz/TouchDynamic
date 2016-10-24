@@ -4,6 +4,7 @@ package com.example.michalik.touchdynamic.fragment;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,12 +42,14 @@ import butterknife.ButterKnife;
  */
 public class MeasureFragment extends Fragment{
 
+    public static final String TAG  = MeasureFragment.class.getSimpleName();
 
     private AccelerometerService accelerometerService;
     private TouchService touchService;
-    private ImageView aquisitionField;
     private List<TouchMeasurement> touchMeasurementList;
 
+    @BindView(R.id.fragment_measure_field)
+    ImageView aquisitionField;
     @BindView(R.id.fragment_measure_start)
     Button startButton;
     @BindView(R.id.fragment_measure_send)
@@ -66,16 +70,40 @@ public class MeasureFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_measure, container, false);
-        aquisitionField = (ImageView) container.findViewById(R.id.fragment_measure_field);
-        ButterKnife.bind(view);
+//        aquisitionField = (ImageView) container.findViewById(R.id.fragment_measure_field);
+        ButterKnife.bind(this, view);
+        accelerometerService = new AccelerometerService(getContext());
+        touchService = new TouchService(aquisitionField);
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startMeasurement();
+            }
+        });
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endMeasurement();
+                saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
+            }
+        });
         return view;
     }
+
+//    @OnClick(R.id.fragment_measure_start)
+//    public void onStartButtonClick(){
+//        startMeasurement();
+//    }
+//    @OnClick(R.id.fragment_measure_send)
+//    public void onSendButtonClick(){
+//        endMeasurement();
+//        saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
+//    }
 
     @Override
     public void onStart() {
         super.onStart();
-        accelerometerService = new AccelerometerService(getContext());
-        touchService = new TouchService(aquisitionField);
     }
 
     @Override
@@ -93,11 +121,11 @@ public class MeasureFragment extends Fragment{
         //get time in ms
         endTouchService();
         endAccelerometerService();
-        saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
     }
 
     private void initTouchService(){
         touchService.init();
+        Log.d(TAG, "initTouchService: initializing...");
     }
 
     private void endTouchService(){
@@ -114,6 +142,7 @@ public class MeasureFragment extends Fragment{
     }
 
     private void saveData(List<TouchMeasurement> touchMeasurementList, List<AccelerometerMeasurement> accelerometerMeasurementList){
+        Log.d(TAG, "saveData: "+touchMeasurementList.size());
         FullMeasurementObject m = new FullMeasurementObject(touchMeasurementList, accelerometerMeasurementList);
         CSVwrapper csVwrapper = new CSVwrapper(m, new CSVwrapper.FileReadyListener() {
             @Override
@@ -132,6 +161,7 @@ public class MeasureFragment extends Fragment{
                         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
+                ds.sendFileToCloud(file);
             }
 
             @Override

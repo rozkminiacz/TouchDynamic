@@ -13,7 +13,7 @@ import io.realm.RealmConfiguration;
  */
 
 public class App extends Application {
-    public StorageReference storageReference;
+    public static StorageReference storageReference;
     private static App app;
     @Override
     public void onCreate() {
