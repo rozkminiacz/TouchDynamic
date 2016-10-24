@@ -17,21 +17,21 @@ import java.util.List;
  * Created by michalik on 22.10.16
  */
 
-public class CSVwrapper {
+public class CsvWrapper {
 
-    public static final String TAG = CSVwrapper.class.getSimpleName();
+    public static final String TAG = CsvWrapper.class.getSimpleName();
 
     private final FullMeasurementObject measurementObject;
-    private static final String separator = ",";
+    private static final String separator = ",\t";
     private static final String newline = "\n";
     private final FileReadyListener listener;
 
-    public CSVwrapper(FullMeasurementObject measurementObject, FileReadyListener listener){
+    public CsvWrapper(FullMeasurementObject measurementObject, FileReadyListener listener){
         this.measurementObject=measurementObject;
         this.listener=listener;
     }
     public void createFile(Context context){
-        String filename = measurementObject.getUserData().getId()+"_"+measurementObject.getId();
+        String filename = measurementObject.getUserData().getId()+"_"+measurementObject.getId()+".csv";
 
         FileOutputStream fileOutputStream;
         File file = new File(context.getFilesDir(), filename);
@@ -54,13 +54,13 @@ public class CSVwrapper {
     }
 
     private String appendDataSeparator() {
-     return "##################################";
+     return "##################################\n";
     }
 
     private String appendDataTouch(){
         String out;
         StringBuilder sb = new StringBuilder();
-        sb.append("#, eventTime, type, x, y\n");
+        sb.append("eventTime,\ttype,\tx,\ty\n");
         List<TouchMeasurement> touchMeasurements = measurementObject.getTouchMeasurements();
         for(TouchMeasurement t : touchMeasurements){
 
@@ -72,7 +72,7 @@ public class CSVwrapper {
                     .append(t.getX())
                     .append(separator)
                     .append(t.getY())
-                    .append(separator)
+//                    .append(separator)
                     .append(newline);
         }
 

@@ -2,11 +2,9 @@ package com.example.michalik.touchdynamic.fragment;
 
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,9 +17,8 @@ import com.example.michalik.touchdynamic.objects.FullMeasurementObject;
 import com.example.michalik.touchdynamic.objects.TouchMeasurement;
 import com.example.michalik.touchdynamic.services.AccelerometerService;
 import com.example.michalik.touchdynamic.services.DataStreamConnector;
-import com.example.michalik.touchdynamic.services.RealmHandler;
 import com.example.michalik.touchdynamic.services.TouchService;
-import com.example.michalik.touchdynamic.utils.CSVwrapper;
+import com.example.michalik.touchdynamic.utils.CsvWrapper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +26,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -144,7 +140,7 @@ public class MeasureFragment extends Fragment{
     private void saveData(List<TouchMeasurement> touchMeasurementList, List<AccelerometerMeasurement> accelerometerMeasurementList){
         Log.d(TAG, "saveData: "+touchMeasurementList.size());
         FullMeasurementObject m = new FullMeasurementObject(touchMeasurementList, accelerometerMeasurementList);
-        CSVwrapper csVwrapper = new CSVwrapper(m, new CSVwrapper.FileReadyListener() {
+        CsvWrapper csvWrapper = new CsvWrapper(m, new CsvWrapper.FileReadyListener() {
             @Override
             public void fileReady(File file) {
                 DataStreamConnector ds = new DataStreamConnector();
@@ -170,6 +166,6 @@ public class MeasureFragment extends Fragment{
                 Toast.makeText(getContext(), "Failed to create", Toast.LENGTH_SHORT).show();
             }
         });
-        csVwrapper.createFile(getContext());
+        csvWrapper.createFile(getContext());
     }
 }
