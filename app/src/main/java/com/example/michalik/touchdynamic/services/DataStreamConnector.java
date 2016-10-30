@@ -24,12 +24,14 @@ public class DataStreamConnector {
     private static final String TAG = DataStreamConnector.class.getSimpleName();
     private StorageReference firebaseReference;
     private UploadListener uploadListener;
+    public String accReference;
+    public String touchReference;
 
     public DataStreamConnector(){
         this.firebaseReference = FirebaseStorage.getInstance().getReference();
     }
 
-    public void sendFileToCloud(File csvFile){
+    public void sendFileToCloud(final File csvFile, final String id){
         Uri uri = Uri.fromFile(csvFile);
         StorageReference storageReference = firebaseReference.child("data/"+csvFile.getName());
         storageReference.putFile(uri)
@@ -38,7 +40,13 @@ public class DataStreamConnector {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUri = taskSnapshot.getDownloadUrl();
                         if(uploadListener!=null){
-                            uploadListener.onSuccess(downloadUri.toString());
+                            if(csvFile.getName().contains("acc")){
+                                accReference = taskSnapshot.getDownloadUrl().toString();
+                            }
+                            if(csvFile.getName().contains("touch")){
+                                touchReference = taskSnapshot.getDownloadUrl().toString();
+                            }
+                            uploadListener.onSuccess(downloadUri.toString(), id);
                         }
                     }
                 })
@@ -58,7 +66,7 @@ public class DataStreamConnector {
     }
 
     public interface UploadListener{
-        void onSuccess(String msg);
+        void onSuccess(String msg, String measureId);
         void onFailure(String msg);
     }
 }

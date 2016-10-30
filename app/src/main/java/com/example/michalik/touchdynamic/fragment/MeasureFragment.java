@@ -2,6 +2,8 @@ package com.example.michalik.touchdynamic.fragment;
 
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.example.michalik.touchdynamic.R;
 import com.example.michalik.touchdynamic.objects.AccelerometerMeasurement;
 import com.example.michalik.touchdynamic.objects.FullMeasurementObject;
+import com.example.michalik.touchdynamic.objects.RealmMeasureInfo;
 import com.example.michalik.touchdynamic.objects.TouchMeasurement;
 import com.example.michalik.touchdynamic.services.AccelerometerService;
 import com.example.michalik.touchdynamic.services.DataStreamConnector;
@@ -26,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +58,7 @@ public class MeasureFragment extends Fragment{
     Button resetButton;
     @BindView(R.id.fragment_measure_settings)
     Button settingsButton;
+    private Realm realm;
 
 
     public MeasureFragment() {
@@ -74,17 +79,28 @@ public class MeasureFragment extends Fragment{
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startMeasurement();
+                showSettingsDialog();
             }
         });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 endMeasurement();
-                saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
+                try{
+                    saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
+                }
+                catch (Exception e){
+                    Snackbar.make(v, "Measurement not completed or connection problems", Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
         return view;
+    }
+
+    private void showSettingsDialog() {
+        MeasureSettingsDialog dialog = new MeasureSettingsDialog();
+
+        startMeasurement();
     }
 
 //    @OnClick(R.id.fragment_measure_start)
@@ -137,18 +153,35 @@ public class MeasureFragment extends Fragment{
 
     }
 
-    private void saveData(List<TouchMeasurement> touchMeasurementList, List<AccelerometerMeasurement> accelerometerMeasurementList){
+    private void saveData(List<TouchMeasurement> touchMeasurementList, List<AccelerometerMeasurement> accelerometerMeasurementList) throws Exception{
         Log.d(TAG, "saveData: "+touchMeasurementList.size());
         FullMeasurementObject m = new FullMeasurementObject(touchMeasurementList, accelerometerMeasurementList);
+
+        realm = Realm.getDefaultInstance();
+
+        RealmMeasureInfo realmMeasureInfo = new RealmMeasureInfo();
+        realmMeasureInfo.setMeasureId(m.getId());
+
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(realmMeasureInfo);
+        realm.commitTransaction();
+
         CsvWrapper csvWrapper = new CsvWrapper(m, new CsvWrapper.FileReadyListener() {
             @Override
-            public void fileReady(File file) {
+            public void fileReady(final File file, String id) {
                 DataStreamConnector ds = new DataStreamConnector();
                 ds.setListener(new DataStreamConnector.UploadListener() {
                     @Override
-                    public void onSuccess(String msg) {
-//                        Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                    public void onSuccess(String msg, String id) {
+                        RealmMeasureInfo r = realm.where(RealmMeasureInfo.class).equalTo("measureId", id).findFirst();
+                        realm.beginTransaction();
+                        if(file.getName().contains("acc")){
+                            r.setAccURL(msg);
+                        }
+                        if(file.getName().contains("touch")){
+                            r.setTouchURL(msg);
+                        }
+                        realm.commitTransaction();
                     }
 
                     @Override
@@ -157,7 +190,7 @@ public class MeasureFragment extends Fragment{
                         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
-                ds.sendFileToCloud(file);
+                ds.sendFileToCloud(file, id);
             }
 
             @Override
@@ -166,6 +199,8 @@ public class MeasureFragment extends Fragment{
                 Toast.makeText(getContext(), "Failed to create", Toast.LENGTH_SHORT).show();
             }
         });
-        csvWrapper.createFile(getContext());
+        csvWrapper.createAccFile(getContext());
+        csvWrapper.createTouchFile(getContext());
+
     }
 }

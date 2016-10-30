@@ -22,7 +22,7 @@ public class CsvWrapper {
     public static final String TAG = CsvWrapper.class.getSimpleName();
 
     private final FullMeasurementObject measurementObject;
-    private static final String separator = ",\t";
+    private static final String separator = ",";
     private static final String newline = "\n";
     private final FileReadyListener listener;
 
@@ -30,7 +30,47 @@ public class CsvWrapper {
         this.measurementObject=measurementObject;
         this.listener=listener;
     }
-    public void createFile(Context context){
+    public void createAccFile(Context context){
+        String filename = "acc_"+measurementObject.getId()+".csv";
+
+        FileOutputStream fileOutputStream;
+        File file = new File(context.getFilesDir(), filename);
+        try{
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(appendHeader().getBytes());
+            fileOutputStream.write(appendCreationDate().getBytes());
+            fileOutputStream.write(appendDataAcc().getBytes());
+            fileOutputStream.close();
+        }
+        catch (IOException e){
+            Log.d(TAG, "createFullFile: ", e);
+            listener.failedToCreate();
+        }
+        if(file!=null && file.exists() && file.isFile()){
+            listener.fileReady(file, measurementObject.getId());
+        }
+    }
+    public void createTouchFile(Context context){
+        String filename = "touch_"+measurementObject.getId()+".csv";
+
+        FileOutputStream fileOutputStream;
+        File file = new File(context.getFilesDir(), filename);
+        try{
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(appendHeader().getBytes());
+            fileOutputStream.write(appendCreationDate().getBytes());
+            fileOutputStream.write(appendDataTouch().getBytes());
+            fileOutputStream.close();
+        }
+        catch (IOException e){
+            Log.d(TAG, "createFullFile: ", e);
+            listener.failedToCreate();
+        }
+        if(file!=null && file.exists() && file.isFile()){
+            listener.fileReady(file, measurementObject.getId());
+        }
+    }
+    public void createFullFile(Context context){
         String filename = measurementObject.getUserData().getId()+"_"+measurementObject.getId()+".csv";
 
         FileOutputStream fileOutputStream;
@@ -45,11 +85,11 @@ public class CsvWrapper {
             fileOutputStream.close();
         }
         catch (IOException e){
-            Log.d(TAG, "createFile: ", e);
+            Log.d(TAG, "createFullFile: ", e);
             listener.failedToCreate();
         }
         if(file!=null && file.exists() && file.isFile()){
-            listener.fileReady(file);
+            listener.fileReady(file, measurementObject.getId());
         }
     }
 
@@ -60,7 +100,7 @@ public class CsvWrapper {
     private String appendDataTouch(){
         String out;
         StringBuilder sb = new StringBuilder();
-        sb.append("eventTime,\ttype,\tx,\ty\n");
+        sb.append("eventTime, type, x, y\n");
         List<TouchMeasurement> touchMeasurements = measurementObject.getTouchMeasurements();
         for(TouchMeasurement t : touchMeasurements){
 
@@ -83,7 +123,7 @@ public class CsvWrapper {
         StringBuilder sb = new StringBuilder();
         List<AccelerometerMeasurement> accList = measurementObject.getAccelerometerMeasurements();
 
-        sb.append("#, eventTime, x, y, z\n");
+        sb.append("eventTime, x, y, z\n");
         for (AccelerometerMeasurement ac : accList){
             sb.
                     append(ac.getEventTime())
@@ -105,7 +145,7 @@ public class CsvWrapper {
         return "#"+measurementObject.getId()+newline+"#"+measurementObject.getUserData().getId();
     }
     public interface FileReadyListener{
-        void fileReady(File file);
+        void fileReady(File file, String id);
         void failedToCreate();
     }
 }
