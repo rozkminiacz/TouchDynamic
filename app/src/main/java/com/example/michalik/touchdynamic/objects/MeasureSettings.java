@@ -8,8 +8,40 @@ import io.realm.RealmObject;
 
 public class MeasureSettings extends RealmObject {
 
-    private String time;
-    private boolean isRested;
-    private boolean isSettingsDefault;
+    private int age;
+    private int tired;
+    private String gender;
+    private String position;
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getTired() {
+        return tired;
+    }
+
+    public void setTired(int tired) {
+        this.tired = tired;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 }

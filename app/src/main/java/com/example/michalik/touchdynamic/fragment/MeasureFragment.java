@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.michalik.touchdynamic.R;
 import com.example.michalik.touchdynamic.objects.AccelerometerMeasurement;
 import com.example.michalik.touchdynamic.objects.FullMeasurementObject;
+import com.example.michalik.touchdynamic.objects.MeasureSettings;
 import com.example.michalik.touchdynamic.objects.RealmMeasureInfo;
 import com.example.michalik.touchdynamic.objects.TouchMeasurement;
 import com.example.michalik.touchdynamic.services.AccelerometerService;
@@ -98,9 +99,21 @@ public class MeasureFragment extends Fragment{
     }
 
     private void showSettingsDialog() {
-        MeasureSettingsDialog dialog = new MeasureSettingsDialog();
+        final DialogSettingsFragment dialog = new DialogSettingsFragment();
+        dialog.setListener(new DialogSettingsFragment.SettingsAppliedListener() {
+            @Override
+            public void onApplied(MeasureSettings measureSettings) {
+                dialog.dismiss();
+                Toast.makeText(getContext(), measureSettings.getPosition(), Toast.LENGTH_SHORT).show();
+                startMeasurement(measureSettings);
+            }
 
-        startMeasurement();
+            @Override
+            public void onDismissed() {
+                //do nothing
+            }
+        });
+        dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
     }
 
 //    @OnClick(R.id.fragment_measure_start)
@@ -123,7 +136,7 @@ public class MeasureFragment extends Fragment{
         super.onPause();
     }
 
-    private void startMeasurement(){
+    private void startMeasurement(MeasureSettings settings){
         touchMeasurementList = new ArrayList<>();
         //get time in ms
         initTouchService();
