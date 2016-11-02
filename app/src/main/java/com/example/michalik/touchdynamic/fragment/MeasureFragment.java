@@ -3,7 +3,6 @@ package com.example.michalik.touchdynamic.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,10 +56,9 @@ public class MeasureFragment extends Fragment{
     Button sendButton;
     @BindView(R.id.fragment_measure_reset)
     Button resetButton;
-    @BindView(R.id.fragment_measure_settings)
-    Button settingsButton;
-    private Realm realm;
 
+    private Realm realm;
+    private RealmMeasureInfo measureInfo;
 
     public MeasureFragment() {
         // Required empty public constructor
@@ -91,6 +89,7 @@ public class MeasureFragment extends Fragment{
                     saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
                 }
                 catch (Exception e){
+                    Log.d(TAG, "onClick: ", e);
                     Snackbar.make(v, "Measurement not completed or connection problems", Snackbar.LENGTH_SHORT).show();
                 }
             }
@@ -114,6 +113,7 @@ public class MeasureFragment extends Fragment{
             }
         });
         dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
+//        startMeasurement(new MeasureSettings());
     }
 
 //    @OnClick(R.id.fragment_measure_start)
@@ -186,15 +186,14 @@ public class MeasureFragment extends Fragment{
                 ds.setListener(new DataStreamConnector.UploadListener() {
                     @Override
                     public void onSuccess(String msg, String id) {
-                        RealmMeasureInfo r = realm.where(RealmMeasureInfo.class).equalTo("measureId", id).findFirst();
-                        realm.beginTransaction();
+
                         if(file.getName().contains("acc")){
-                            r.setAccURL(msg);
+                            measureInfo.setAccURL(msg);
                         }
                         if(file.getName().contains("touch")){
-                            r.setTouchURL(msg);
+                            measureInfo.setTouchURL(msg);
                         }
-                        realm.commitTransaction();
+
                     }
 
                     @Override
@@ -203,7 +202,13 @@ public class MeasureFragment extends Fragment{
                         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
-                ds.sendFileToCloud(file, id);
+                if(file.getName().contains("acc")){
+                    ds.sendAccFileToServer(file, id, DataStreamConnector.ACC_ENDPOINT);
+                }
+                if(file.getName().contains("touch")){
+                    ds.sendTouchFileToServer(file, id, DataStreamConnector.TOUCH_ENDPOINT);
+                }
+
             }
 
             @Override
@@ -214,6 +219,5 @@ public class MeasureFragment extends Fragment{
         });
         csvWrapper.createAccFile(getContext());
         csvWrapper.createTouchFile(getContext());
-
     }
 }

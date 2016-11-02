@@ -4,20 +4,21 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.michalik.touchdynamic.objects.FileuploadResponse;
+import com.example.michalik.touchdynamic.objects.FileUploadResponse;
 import com.example.michalik.touchdynamic.utils.RetrofitInterface;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
 
 import java.io.File;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,9 +39,11 @@ public class DataStreamConnector {
     private UploadListener uploadListener;
     public String accReference;
     public String touchReference;
-    public static final String TOUCH_ENDPOINT = "";
-    public static final String ACC_ENDPOINT = "";
-
+    public static final String TOUCH_ENDPOINT = "touchfiles";
+    public static final String ACC_ENDPOINT = "accfiles";
+    private static final String BASE_URL = "http://139.59.213.12:81/";
+    public static final String TOUCH = "TOUCH";
+    public static final String ACC = "ACC";
     public DataStreamConnector(){
         this.firebaseReference = FirebaseStorage.getInstance().getReference();
     }
@@ -75,29 +78,116 @@ public class DataStreamConnector {
                 });
     }
 
-    public void sendFileToServer(final File csvFile){
+    public void sendTouchFileToServer(final File csvFile, final String type, final String ENDPOINT){
 
-        Retrofit retrofit = build(TOUCH_ENDPOINT);
+        switch (ENDPOINT){
+            case TOUCH_ENDPOINT:
+                break;
+            case ACC_ENDPOINT:
+                break;
+        }
+
+        Retrofit retrofit = build(ENDPOINT);
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
 
         RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"), csvFile);
 
         MultipartBody.Part body =
-                MultipartBody.Part.createFormData("picture", csvFile.getName(), file);
+                MultipartBody.Part.createFormData("file", csvFile.getName(), file);
 
-        retrofitInterface.uploadTouch(body).enqueue(new Callback<FileuploadResponse>() {
+//        String descriptionString = type;
+//        RequestBody description =
+//                RequestBody.create(
+//                        MediaType.parse("multipart/form-data"), type);
+//
+        retrofitInterface.uploadTouch(body).enqueue(new Callback<List<FileUploadResponse>>() {
             @Override
-            public void onResponse(Call<FileuploadResponse> call, Response<FileuploadResponse> response) {
-                Log.d(TAG, "onResponse: ");       
+            public void onResponse(Call<List<FileUploadResponse>> call, Response<List<FileUploadResponse>> response) {
+                Log.d(TAG, "onResponse: "+response.body().size());
+                uploadListener.onSuccess(response.body().get(0).getFilename(), response.body().get(0).getId());
             }
 
             @Override
-            public void onFailure(Call<FileuploadResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure: ");
+            public void onFailure(Call<List<FileUploadResponse>> call, Throwable t) {
+
+            }
+        });
+//        retrofitInterface.uploadTouch(body).enqueue(new Callback<FileUploadResponse>() {
+//            @Override
+//            public void onResponse(Call<FileUploadResponse> call, Response<FileUploadResponse> response) {
+//                Log.d(TAG, "onResponse: ");
+//                if(uploadListener!=null){
+//
+//                    uploadListener.onSuccess(response.body().getFilename(), response.body().getId());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<FileUploadResponse> call, Throwable t) {
+//                Log.d(TAG, "onFailure: ", t);
+//                uploadListener.onFailure(t.getMessage());
+//            }
+//        });
+    }
+
+    public void sendAccFileToServer(final File csvFile, final String type, final String ENDPOINT){
+
+        switch (ENDPOINT){
+            case TOUCH_ENDPOINT:
+                break;
+            case ACC_ENDPOINT:
+                break;
+        }
+
+        Retrofit retrofit = build(ENDPOINT);
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+
+        RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"), csvFile);
+
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", csvFile.getName(), file);
+
+//        String descriptionString = type;
+//        RequestBody description =
+//                RequestBody.create(
+//                        MediaType.parse("multipart/form-data"), descriptionString);
+
+//        retrofitInterface.uploadAcc(body).enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                try{
+//                    Log.d(TAG, "onResponse: "+response.body().string());
+//                }
+//                catch (Exception e){
+//                    Log.d(TAG, "onResponse: ", e);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//            }
+//        });
+
+        retrofitInterface.uploadAcc(body).enqueue(new Callback<List<FileUploadResponse>>() {
+            @Override
+            public void onResponse(Call<List<FileUploadResponse>> call, Response<List<FileUploadResponse>> response) {
+                Log.d(TAG, "onResponse: ");
+                if(uploadListener!=null){
+                    uploadListener.onSuccess(response.body().get(0).getFilename(), response.body().get(0).getId());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FileUploadResponse>> call, Throwable t) {
+                Log.d(TAG, "onFailure: ", t);
+                uploadListener.onFailure(t.getMessage());
             }
         });
     }
+
 
     public void setListener(UploadListener uploadListener){
         this.uploadListener = uploadListener;
@@ -105,7 +195,7 @@ public class DataStreamConnector {
 
     private static Retrofit build(String endpoint){
         return new Retrofit.Builder()
-                .baseUrl(endpoint)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

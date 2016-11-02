@@ -18,6 +18,8 @@
     <string name="settings_dialog_position_sitting">Sitting</string>
     <string name="settings_dialog_position_laying">Laying</string>
     <string name="settings_dialog_tired">Tired</string>
+    <string name="settings_dialog_finger">Finger</string>
+    <string name="settings_dialog_bpm">Desired speed</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

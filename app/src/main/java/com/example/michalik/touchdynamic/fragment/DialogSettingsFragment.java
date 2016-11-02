@@ -35,6 +35,12 @@ public class DialogSettingsFragment extends DialogFragment {
     @BindView(R.id.dialog_settings_rested_spinner)
             AppCompatSpinner restedSpinner;
 
+    @BindView(R.id.dialog_settings_finger_spinner)
+            AppCompatSpinner fingerSpinner;
+
+    @BindView(R.id.dialog_settings_bpm_spinner)
+            AppCompatSpinner bpmSpinner;
+
     SettingsAppliedListener listener;
 
     public void setListener(SettingsAppliedListener listener) {
@@ -60,7 +66,11 @@ public class DialogSettingsFragment extends DialogFragment {
     public void onApply(){
         MeasureSettings settings = new MeasureSettings();
         settings.setPosition((String)positionSpinner.getSelectedItem());
-        listener.onApplied(new MeasureSettings());
+        settings.setAge((int)ageSpinner.getSelectedItem());
+        settings.setFinger((int)fingerSpinner.getSelectedItem());
+        settings.setTired((int)restedSpinner.getSelectedItem());
+//        settings.setDevicePosition((String));
+        listener.onApplied(settings);
     }
 
     private void populateSpinners(){
@@ -97,6 +107,23 @@ public class DialogSettingsFragment extends DialogFragment {
         ArrayAdapter<String> positionAdapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, positionList);
         positionSpinner.setAdapter(positionAdapter);
         positionSpinner.setPrompt(positionList.get(0));
+
+        List<Integer> fingerList = new ArrayList<>();
+        for(int i=1; i<=5; i++){
+            fingerList.add(i);
+        }
+        ArrayAdapter<Integer> fingerAdapter = new ArrayAdapter<Integer>(getContext(), R.layout.support_simple_spinner_dropdown_item, fingerList);
+        fingerSpinner.setAdapter(fingerAdapter);
+        fingerSpinner.setPrompt("1");
+
+        List<String> bpmList = new ArrayList<>();
+        bpmList.add("80 BPM");
+        bpmList.add("100 BPM");
+        bpmList.add("120 BPM");
+        ArrayAdapter<String> bpmAdapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, bpmList);
+        bpmSpinner.setAdapter(bpmAdapter);
+        bpmSpinner.setPrompt("100 BPM");
+
 
     }
 
