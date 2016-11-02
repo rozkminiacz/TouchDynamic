@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.michalik.touchdynamic.R;
 import com.example.michalik.touchdynamic.objects.AccelerometerMeasurement;
 import com.example.michalik.touchdynamic.objects.FullMeasurementObject;
+import com.example.michalik.touchdynamic.objects.MeasureDataRequest;
 import com.example.michalik.touchdynamic.objects.MeasureSettings;
 import com.example.michalik.touchdynamic.objects.RealmMeasureInfo;
 import com.example.michalik.touchdynamic.objects.TouchMeasurement;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.realm.Realm;
 
 /**
@@ -94,6 +96,7 @@ public class MeasureFragment extends Fragment{
                 }
             }
         });
+        measureInfo = new RealmMeasureInfo();
         return view;
     }
 
@@ -112,8 +115,8 @@ public class MeasureFragment extends Fragment{
                 //do nothing
             }
         });
-        dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
-//        startMeasurement(new MeasureSettings());
+//        dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
+        startMeasurement(new MeasureSettings());
     }
 
 //    @OnClick(R.id.fragment_measure_start)
@@ -219,5 +222,29 @@ public class MeasureFragment extends Fragment{
         });
         csvWrapper.createAccFile(getContext());
         csvWrapper.createTouchFile(getContext());
+    }
+
+    @OnClick(R.id.fragment_measure_post)
+    public void onPostClicked(){
+        try{
+            sendData();
+        }
+        catch (Exception e){
+            Log.d(TAG, "onPostClicked: ", e);
+        }
+    }
+
+    private void sendData() throws Exception{
+        DataStreamConnector ds = new DataStreamConnector();
+        measureInfo.setDevicePosition("");
+        measureInfo.setTired(0);
+        measureInfo.setAge(0);
+        measureInfo.setDesiredBPM(120);
+        measureInfo.setFinger(2);
+        measureInfo.setGender("MAN");
+        measureInfo.setHand("LEFT");
+        measureInfo.setUserId("userId");
+        measureInfo.setPosition("STANDING");
+        ds.postMeasureData(MeasureDataRequest.fromRealm(measureInfo));
     }
 }

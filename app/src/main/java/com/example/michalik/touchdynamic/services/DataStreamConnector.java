@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.michalik.touchdynamic.objects.FileUploadResponse;
+import com.example.michalik.touchdynamic.objects.MeasureDataRequest;
 import com.example.michalik.touchdynamic.utils.RetrofitInterface;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -184,6 +185,21 @@ public class DataStreamConnector {
             public void onFailure(Call<List<FileUploadResponse>> call, Throwable t) {
                 Log.d(TAG, "onFailure: ", t);
                 uploadListener.onFailure(t.getMessage());
+            }
+        });
+    }
+    public void postMeasureData(MeasureDataRequest measureData){
+        Retrofit retrofit = build("");
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+        retrofitInterface.postMeasureInfo(measureData).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d(TAG, "onResponse: "+response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d(TAG, "onFailure: ", t);
             }
         });
     }
