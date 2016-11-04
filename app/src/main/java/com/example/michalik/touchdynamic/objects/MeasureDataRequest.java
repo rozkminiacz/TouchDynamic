@@ -6,55 +6,20 @@ package com.example.michalik.touchdynamic.objects;
 
 public class MeasureDataRequest {
 
-    private String userId;
-    private String touchURL;
-    private String accURL;
-    private int age;
-    private int tired;
-    private String gender;
-    private String position;
-    private String hand;
-    private int finger;
-    private int desiredBPM;
-    private String devicePosition;
+    String userId;
+    String touchURL;
+    String accURL;
+    String age;
+    String tired;
+    String gender;
+    String position;
+    String hand;
+    String finger;
+    String desiredBPM;
+    String devicePosition;
 
-    public MeasureDataRequest(String userId,
-                              String touchURL,
-                              String accURL,
-                              int age,
-                              int tired,
-                              String gender,
-                              String position,
-                              String hand,
-                              int finger,
-                              int desiredBPM,
-                              String devicePosition) {
-        this.userId = userId;
-        this.touchURL = touchURL;
-        this.accURL = accURL;
-        this.age = age;
-        this.tired = tired;
-        this.gender = gender;
-        this.position = position;
-        this.hand = hand;
-        this.finger = finger;
-        this.desiredBPM = desiredBPM;
-        this.devicePosition = devicePosition;
-    }
+    public MeasureDataRequest(){
 
-    public static MeasureDataRequest fromRealm(RealmMeasureInfo measureInfo){
-        return new MeasureDataRequest(
-                measureInfo.getUserId(),
-                measureInfo.getTouchURL(),
-                measureInfo.getAccURL(),
-                measureInfo.getAge(),
-                measureInfo.getTired(),
-                measureInfo.getGender(),
-                measureInfo.getPosition(),
-                measureInfo.getHand(),
-                measureInfo.getFinger(),
-                measureInfo.getDesiredBPM(),
-                measureInfo.getDevicePosition());
     }
 
     public String getUserId() {
@@ -81,19 +46,19 @@ public class MeasureDataRequest {
         this.accURL = accURL;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 
-    public int getTired() {
+    public String getTired() {
         return tired;
     }
 
-    public void setTired(int tired) {
+    public void setTired(String tired) {
         this.tired = tired;
     }
 
@@ -121,19 +86,19 @@ public class MeasureDataRequest {
         this.hand = hand;
     }
 
-    public int getFinger() {
+    public String getFinger() {
         return finger;
     }
 
-    public void setFinger(int finger) {
+    public void setFinger(String finger) {
         this.finger = finger;
     }
 
-    public int getDesiredBPM() {
+    public String getDesiredBPM() {
         return desiredBPM;
     }
 
-    public void setDesiredBPM(int desiredBPM) {
+    public void setDesiredBPM(String desiredBPM) {
         this.desiredBPM = desiredBPM;
     }
 
@@ -143,5 +108,14 @@ public class MeasureDataRequest {
 
     public void setDevicePosition(String devicePosition) {
         this.devicePosition = devicePosition;
+    }
+
+    public void applySettings(MeasureSettings measureSettings) {
+        this.age=measureSettings.getAge();
+        this.desiredBPM=measureSettings.getDesiredBPM();
+        this.hand=measureSettings.getHand();
+        this.finger=measureSettings.getFinger();
+        this.gender=measureSettings.getGender();
+        //@TODO - uzupełnić
     }
 }

@@ -29,5 +29,5 @@ public interface RetrofitInterface {
     Call<List<FileUploadResponse>> uploadAcc(@Part MultipartBody.Part file);
 
     @POST("/measuredata")
-    Call<ResponseBody> postMeasureInfo(@Body MeasureDataRequest dataRequest);
+    Call<MeasureDataRequest> postMeasureInfo(@Body MeasureDataRequest dataRequest);
 }

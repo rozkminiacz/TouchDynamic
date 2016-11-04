@@ -19,7 +19,6 @@ import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -88,7 +87,7 @@ public class DataStreamConnector {
                 break;
         }
 
-        Retrofit retrofit = build(ENDPOINT);
+        Retrofit retrofit = retrofitCreator();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
 
@@ -141,7 +140,7 @@ public class DataStreamConnector {
                 break;
         }
 
-        Retrofit retrofit = build(ENDPOINT);
+        Retrofit retrofit = retrofitCreator();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
 
@@ -150,32 +149,11 @@ public class DataStreamConnector {
         MultipartBody.Part body =
                 MultipartBody.Part.createFormData("file", csvFile.getName(), file);
 
-//        String descriptionString = type;
-//        RequestBody description =
-//                RequestBody.create(
-//                        MediaType.parse("multipart/form-data"), descriptionString);
-
-//        retrofitInterface.uploadAcc(body).enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                try{
-//                    Log.d(TAG, "onResponse: "+response.body().string());
-//                }
-//                catch (Exception e){
-//                    Log.d(TAG, "onResponse: ", e);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-//            }
-//        });
 
         retrofitInterface.uploadAcc(body).enqueue(new Callback<List<FileUploadResponse>>() {
             @Override
             public void onResponse(Call<List<FileUploadResponse>> call, Response<List<FileUploadResponse>> response) {
-                Log.d(TAG, "onResponse: ");
+                Log.d(TAG, "onResponse: "+response.body().size());
                 if(uploadListener!=null){
                     uploadListener.onSuccess(response.body().get(0).getFilename(), response.body().get(0).getId());
                 }
@@ -189,17 +167,21 @@ public class DataStreamConnector {
         });
     }
     public void postMeasureData(MeasureDataRequest measureData){
-        Retrofit retrofit = build("");
+        Retrofit retrofit = retrofitCreator();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
-        retrofitInterface.postMeasureInfo(measureData).enqueue(new Callback<ResponseBody>() {
+        retrofitInterface.postMeasureInfo(measureData).enqueue(new Callback<MeasureDataRequest>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d(TAG, "onResponse: "+response.toString());
+            public void onResponse(Call<MeasureDataRequest> call, Response<MeasureDataRequest> response) {
+                Log.d(TAG, "onResponse: "+response.message());
+                if(uploadListener!=null){
+                    uploadListener.onSuccess(response.message(), "");
+                }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<MeasureDataRequest> call, Throwable t) {
                 Log.d(TAG, "onFailure: ", t);
+                uploadListener.onFailure(t.getMessage());
             }
         });
     }
@@ -209,7 +191,7 @@ public class DataStreamConnector {
         this.uploadListener = uploadListener;
     }
 
-    private static Retrofit build(String endpoint){
+    private static Retrofit retrofitCreator(){
         return new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

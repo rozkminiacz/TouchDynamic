@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatSpinner;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import butterknife.OnClick;
  */
 
 public class DialogSettingsFragment extends DialogFragment {
+
+    public static final String TAG = DialogSettingsFragment.class.getSimpleName();
 
     @BindView(R.id.dialog_settings_age_spinner)
             AppCompatSpinner ageSpinner;
@@ -66,9 +69,14 @@ public class DialogSettingsFragment extends DialogFragment {
     public void onApply(){
         MeasureSettings settings = new MeasureSettings();
         settings.setPosition((String)positionSpinner.getSelectedItem());
-        settings.setAge((int)ageSpinner.getSelectedItem());
-        settings.setFinger((int)fingerSpinner.getSelectedItem());
-        settings.setTired((int)restedSpinner.getSelectedItem());
+        settings.setAge((int)ageSpinner.getSelectedItem()+"");
+        settings.setGender((String)genderSpinner.getSelectedItem());
+        settings.setFinger((int)fingerSpinner.getSelectedItem()+"");
+        settings.setTired((int)restedSpinner.getSelectedItem()+"");
+        settings.setHand("unspecified");
+        settings.setDesiredBPM("100");
+        settings.setDevicePosition("unspecified");
+        Log.d(TAG, "onApply: ");
 //        settings.setDevicePosition((String));
         listener.onApplied(settings);
     }
@@ -81,15 +89,18 @@ public class DialogSettingsFragment extends DialogFragment {
         genderSpinner.setAdapter(genderAdapter);
         genderSpinner.setPrompt(genderList.get(0));
 
-        List<String> tiredList = new ArrayList<>();
-        tiredList.add("1 - rested");
-        for(int i=2; i<=9; i++){
-            tiredList.add(""+i);
+        List<Integer> tiredList = new ArrayList<>();
+        for(int i=1; i<=10; i++){
+            tiredList.add(i);
         }
-        tiredList.add("10 - tired");
-        ArrayAdapter<String> tiredAdapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, tiredList);
+//        tiredList.add("1 - rested");
+//        for(int i=2; i<=9; i++){
+//            tiredList.add(""+i);
+//        }
+//        tiredList.add("10 - tired");
+        ArrayAdapter<Integer> tiredAdapter = new ArrayAdapter<Integer>(getContext(), R.layout.support_simple_spinner_dropdown_item, tiredList);
         restedSpinner.setAdapter(tiredAdapter);
-        restedSpinner.setPrompt(tiredList.get(0));
+        restedSpinner.setPrompt(tiredList.get(0).toString());
 
         List<Integer> ageList = new ArrayList<>();
         for(int i=1; i<100; i++){

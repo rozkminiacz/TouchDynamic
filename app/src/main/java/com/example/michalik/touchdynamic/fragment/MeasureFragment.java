@@ -27,6 +27,7 @@ import com.example.michalik.touchdynamic.utils.CsvWrapper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,7 +61,7 @@ public class MeasureFragment extends Fragment{
     Button resetButton;
 
     private Realm realm;
-    private RealmMeasureInfo measureInfo;
+    private MeasureDataRequest measureDataRequest;
 
     public MeasureFragment() {
         // Required empty public constructor
@@ -70,44 +71,28 @@ public class MeasureFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_measure, container, false);
-//        aquisitionField = (ImageView) container.findViewById(R.id.fragment_measure_field);
         ButterKnife.bind(this, view);
+
         accelerometerService = new AccelerometerService(getContext());
         touchService = new TouchService(aquisitionField);
+        measureDataRequest = new MeasureDataRequest();
+        measureDataRequest.setUserId(UUID.randomUUID().toString());
 
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSettingsDialog();
-            }
-        });
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                endMeasurement();
-                try{
-                    saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
-                }
-                catch (Exception e){
-                    Log.d(TAG, "onClick: ", e);
-                    Snackbar.make(v, "Measurement not completed or connection problems", Snackbar.LENGTH_SHORT).show();
-                }
-            }
-        });
-        measureInfo = new RealmMeasureInfo();
         return view;
     }
 
-    private void showSettingsDialog() {
+    @OnClick(R.id.fragment_measure_start)
+    public void onStartClicked(){
         final DialogSettingsFragment dialog = new DialogSettingsFragment();
         dialog.setListener(new DialogSettingsFragment.SettingsAppliedListener() {
             @Override
             public void onApplied(MeasureSettings measureSettings) {
                 dialog.dismiss();
+                Log.d(TAG, "onApplied: ");
                 Toast.makeText(getContext(), measureSettings.getPosition(), Toast.LENGTH_SHORT).show();
-                startMeasurement(measureSettings);
+                measureDataRequest.applySettings(measureSettings);
+                startMeasurement();
             }
 
             @Override
@@ -115,33 +100,35 @@ public class MeasureFragment extends Fragment{
                 //do nothing
             }
         });
-//        dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
-        startMeasurement(new MeasureSettings());
+        dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
     }
 
-//    @OnClick(R.id.fragment_measure_start)
-//    public void onStartButtonClick(){
-//        startMeasurement();
-//    }
-//    @OnClick(R.id.fragment_measure_send)
-//    public void onSendButtonClick(){
-//        endMeasurement();
-//        saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
-//    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    @OnClick(R.id.fragment_measure_send)
+    public void onSendButtonClicked(){
+        endMeasurement();
+        try{
+            saveData(touchService.getTouchMeasurementList(), accelerometerService.getMeasurements());
+        }
+        catch (Exception e){
+            Log.d(TAG, "onClick: ", e);
+            Snackbar.make(getView(), "Measurement not completed or connection problems", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    @OnClick(R.id.fragment_measure_post)
+    public void onPostClicked(){
+        try{
+            sendData();
+        }
+        catch (Exception e){
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT);
+            Log.d(TAG, "onPostClicked: ", e);
+        }
     }
 
-    private void startMeasurement(MeasureSettings settings){
+    private void startMeasurement(){
         touchMeasurementList = new ArrayList<>();
-        //get time in ms
         initTouchService();
         initAccelerometerService();
     }
@@ -157,7 +144,7 @@ public class MeasureFragment extends Fragment{
     }
 
     private void endTouchService(){
-
+        touchService.uinit();
     }
 
     private void initAccelerometerService(){
@@ -173,15 +160,6 @@ public class MeasureFragment extends Fragment{
         Log.d(TAG, "saveData: "+touchMeasurementList.size());
         FullMeasurementObject m = new FullMeasurementObject(touchMeasurementList, accelerometerMeasurementList);
 
-        realm = Realm.getDefaultInstance();
-
-        RealmMeasureInfo realmMeasureInfo = new RealmMeasureInfo();
-        realmMeasureInfo.setMeasureId(m.getId());
-
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(realmMeasureInfo);
-        realm.commitTransaction();
-
         CsvWrapper csvWrapper = new CsvWrapper(m, new CsvWrapper.FileReadyListener() {
             @Override
             public void fileReady(final File file, String id) {
@@ -191,17 +169,16 @@ public class MeasureFragment extends Fragment{
                     public void onSuccess(String msg, String id) {
 
                         if(file.getName().contains("acc")){
-                            measureInfo.setAccURL(msg);
+                            measureDataRequest.setAccURL(msg);
                         }
                         if(file.getName().contains("touch")){
-                            measureInfo.setTouchURL(msg);
+                            measureDataRequest.setTouchURL(msg);
                         }
 
                     }
 
                     @Override
                     public void onFailure(String msg) {
-//                        Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT).show();
                         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -216,7 +193,6 @@ public class MeasureFragment extends Fragment{
 
             @Override
             public void failedToCreate() {
-//                Snackbar.make(getActivity().getCurrentFocus(), "Failed do create file", Snackbar.LENGTH_LONG).show();
                 Toast.makeText(getContext(), "Failed to create", Toast.LENGTH_SHORT).show();
             }
         });
@@ -224,27 +200,22 @@ public class MeasureFragment extends Fragment{
         csvWrapper.createTouchFile(getContext());
     }
 
-    @OnClick(R.id.fragment_measure_post)
-    public void onPostClicked(){
-        try{
-            sendData();
-        }
-        catch (Exception e){
-            Log.d(TAG, "onPostClicked: ", e);
-        }
-    }
-
     private void sendData() throws Exception{
+        if(measureDataRequest.getAccURL()==null || measureDataRequest.getTouchURL()==null){
+            throw new Exception("Files not ready");
+        }
         DataStreamConnector ds = new DataStreamConnector();
-        measureInfo.setDevicePosition("");
-        measureInfo.setTired(0);
-        measureInfo.setAge(0);
-        measureInfo.setDesiredBPM(120);
-        measureInfo.setFinger(2);
-        measureInfo.setGender("MAN");
-        measureInfo.setHand("LEFT");
-        measureInfo.setUserId("userId");
-        measureInfo.setPosition("STANDING");
-        ds.postMeasureData(MeasureDataRequest.fromRealm(measureInfo));
+        ds.setListener(new DataStreamConnector.UploadListener() {
+            @Override
+            public void onSuccess(String msg, String measureId) {
+                Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                Snackbar.make(getView(), msg, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        ds.postMeasureData(measureDataRequest);
     }
 }

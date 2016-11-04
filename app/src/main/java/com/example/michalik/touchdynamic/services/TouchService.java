@@ -43,4 +43,8 @@ public class TouchService implements View.OnTouchListener{
         }
         return true;
     }
+
+    public void uinit() {
+        aquisitionArea.setOnTouchListener(null);
+    }
 }
