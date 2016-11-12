@@ -129,9 +129,15 @@ public class MeasureFragment extends Fragment{
 
     private void startMeasurement(){
         touchMeasurementList = new ArrayList<>();
+        initMetronome();
         initTouchService();
         initAccelerometerService();
     }
+
+    private void initMetronome() {
+
+    }
+
     private void endMeasurement(){
         //get time in ms
         endTouchService();

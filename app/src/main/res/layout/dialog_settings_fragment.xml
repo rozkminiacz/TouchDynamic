@@ -90,12 +90,17 @@
             android:layout_height="wrap_content"
             android:weightSum="4"
             android:orientation="horizontal">
-            <CheckBox
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:checked="true"
-                tools:text="@string/settings_set_as_default" />
+                android:layout_weight="2"
+                android:text="@string/settings_dialog_hand"/>
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_settings_hand_switch"
+                style="?android:attr/switchPreferenceStyle" />
         </LinearLayout>
 
         <LinearLayout

@@ -36,10 +36,18 @@ public class TouchService implements View.OnTouchListener{
         Log.d(TAG, "onTouch: ");
 
         if(event.getAction() == MotionEvent.ACTION_UP){
-            touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_UP));
+            touchMeasurementList.add(
+                    new TouchMeasurement(
+                            event.getRawX(),
+                            event.getRawY(),
+                            TouchMeasurement.ACTION_UP));
         }
         else if(event.getAction() == MotionEvent.ACTION_DOWN){
-            touchMeasurementList.add(new TouchMeasurement(event.getRawX(), event.getRawY(), TouchMeasurement.ACTION_DOWN));
+            touchMeasurementList.add(
+                    new TouchMeasurement(
+                            event.getRawX(),
+                            event.getRawY(),
+                            TouchMeasurement.ACTION_DOWN));
         }
         return true;
     }

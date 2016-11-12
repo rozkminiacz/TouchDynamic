@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,9 @@ public class DialogSettingsFragment extends DialogFragment {
     @BindView(R.id.dialog_settings_bpm_spinner)
             AppCompatSpinner bpmSpinner;
 
+    @BindView(R.id.dialog_settings_hand_switch)
+            SwitchCompat handSwitch;
+
     SettingsAppliedListener listener;
 
     public void setListener(SettingsAppliedListener listener) {
@@ -61,7 +65,7 @@ public class DialogSettingsFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.dialog_settings_fragment, container, false);
 
         ButterKnife.bind(this, v);
-        populateSpinners();
+        populateViews();
         return v;
     }
 
@@ -73,15 +77,21 @@ public class DialogSettingsFragment extends DialogFragment {
         settings.setGender((String)genderSpinner.getSelectedItem());
         settings.setFinger((int)fingerSpinner.getSelectedItem()+"");
         settings.setTired((int)restedSpinner.getSelectedItem()+"");
-        settings.setHand("unspecified");
-        settings.setDesiredBPM("100");
+        settings.setHand(handSwitch.getText().toString());
+        settings.setDesiredBPM((String) bpmSpinner.getSelectedItem());
         settings.setDevicePosition("unspecified");
         Log.d(TAG, "onApply: ");
 //        settings.setDevicePosition((String));
         listener.onApplied(settings);
     }
 
-    private void populateSpinners(){
+    private void populateViews(){
+
+        handSwitch.setShowText(true);
+        handSwitch.setTextOn(getString(R.string.settings_dialog_hand_right));
+        handSwitch.setTextOff(getString(R.string.settings_dialog_hand_left));
+        handSwitch.setChecked(true);
+
         List<String> genderList = new ArrayList<>();
         genderList.add("Man");
         genderList.add("Woman");

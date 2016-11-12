@@ -19,6 +19,9 @@
     <string name="settings_dialog_position_laying">Laying</string>
     <string name="settings_dialog_tired">Tired</string>
     <string name="settings_dialog_finger">Finger</string>
+    <string name="settings_dialog_hand">Hand</string>
+    <string name="settings_dialog_hand_left">Left</string>
+    <string name="settings_dialog_hand_right">Right</string>
     <string name="settings_dialog_bpm">Desired speed</string>
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -29,6 +29,9 @@ public class AccelerometerService implements SensorEventListener2 {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        //values[0] - x
+        //values[1] - y
+        //values[2] - z
         measurements.add(new AccelerometerMeasurement(event.values[0], event.values[1], event.values[2]));
     }
 

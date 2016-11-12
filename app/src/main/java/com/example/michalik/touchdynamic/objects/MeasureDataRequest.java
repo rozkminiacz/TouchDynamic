@@ -17,6 +17,8 @@ public class MeasureDataRequest {
     String finger;
     String desiredBPM;
     String devicePosition;
+    String realFieldSize;
+    String dpi;
 
     public MeasureDataRequest(){
 
@@ -108,6 +110,22 @@ public class MeasureDataRequest {
 
     public void setDevicePosition(String devicePosition) {
         this.devicePosition = devicePosition;
+    }
+
+    public String getRealFieldSize() {
+        return realFieldSize;
+    }
+
+    public void setRealFieldSize(String realFieldSize) {
+        this.realFieldSize = realFieldSize;
+    }
+
+    public String getDpi() {
+        return dpi;
+    }
+
+    public void setDpi(String dpi) {
+        this.dpi = dpi;
     }
 
     public void applySettings(MeasureSettings measureSettings) {
