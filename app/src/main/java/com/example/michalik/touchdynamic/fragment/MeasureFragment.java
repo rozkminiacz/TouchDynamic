@@ -23,6 +23,7 @@ import com.example.michalik.touchdynamic.services.AccelerometerService;
 import com.example.michalik.touchdynamic.services.DataStreamConnector;
 import com.example.michalik.touchdynamic.services.TouchService;
 import com.example.michalik.touchdynamic.utils.CsvWrapper;
+import com.example.michalik.touchdynamic.utils.Metronome;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ public class MeasureFragment extends Fragment{
     }
 
     private void initMetronome() {
-
+        Metronome.playSound(Metronome.bpm120, getContext());
     }
 
     private void endMeasurement(){

@@ -15,20 +15,12 @@ public class Metronome {
     public static final String bpm80 = "80";
     public static final String bpm100 = "100";
     public static final String bpm120 = "120";
+    public static final String bpm140 = "140";
     public static final String TAG = Metronome.class.getSimpleName();
-    private static void playSound(String BPM, Context context){
 
-        String resourceId;
+    public static void playSound(String BPM, Context context){
 
-        switch (BPM){
-            case bpm80:
-                resourceId = R.id.;
-                break;
-            case bpm100:
-                break;
-            case bpm120:
-                break;
-        }
+        String resourceId = "t_"+BPM+"_bpm.wav";
 
         try{
             AssetFileDescriptor descriptor = context.getAssets().openFd(resourceId);
