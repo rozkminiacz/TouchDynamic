@@ -4,6 +4,7 @@ package com.example.michalik.touchdynamic.fragment;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,6 +93,7 @@ public class MeasureFragment extends Fragment{
                 dialog.dismiss();
                 Log.d(TAG, "onApplied: ");
                 Toast.makeText(getContext(), measureSettings.getPosition(), Toast.LENGTH_SHORT).show();
+                setDeviceSettings();
                 measureDataRequest.applySettings(measureSettings);
                 startMeasurement();
             }
@@ -104,6 +106,15 @@ public class MeasureFragment extends Fragment{
         dialog.show(getFragmentManager(), DialogSettingsFragment.class.getSimpleName());
     }
 
+    private void setDeviceSettings(){
+        aquisitionField.getHeight();
+        aquisitionField.getMeasuredWidth();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        measureDataRequest.setRealFieldSize(aquisitionField.getHeight()+" "+aquisitionField.getWidth());
+        measureDataRequest.setDpi(metrics.densityDpi+"");
+
+        Log.d(TAG, "setDeviceSettings: "+aquisitionField.getMeasuredWidth());
+    }
 
     @OnClick(R.id.fragment_measure_send)
     public void onSendButtonClicked(){
@@ -136,7 +147,8 @@ public class MeasureFragment extends Fragment{
     }
 
     private void initMetronome() {
-        Metronome.playSound(Metronome.bpm120, getContext());
+        if(measureDataRequest.getDesiredBPM()!=null && !measureDataRequest.getDesiredBPM().isEmpty())
+        Metronome.playSound(measureDataRequest.getDesiredBPM(), getActivity());
     }
 
     private void endMeasurement(){

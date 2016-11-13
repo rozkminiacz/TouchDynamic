@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.michalik.touchdynamic.R;
 import com.example.michalik.touchdynamic.objects.MeasureSettings;
+import com.example.michalik.touchdynamic.utils.Metronome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class DialogSettingsFragment extends DialogFragment {
         settings.setGender((String)genderSpinner.getSelectedItem());
         settings.setFinger((int)fingerSpinner.getSelectedItem()+"");
         settings.setTired((int)restedSpinner.getSelectedItem()+"");
-        settings.setHand(handSwitch.getText().toString());
+        settings.setHand(handSwitch.isChecked() ? "Right" : "Left");
         settings.setDesiredBPM((String) bpmSpinner.getSelectedItem());
         settings.setDevicePosition("unspecified");
         Log.d(TAG, "onApply: ");
@@ -138,9 +139,12 @@ public class DialogSettingsFragment extends DialogFragment {
         fingerSpinner.setPrompt("1");
 
         List<String> bpmList = new ArrayList<>();
-        bpmList.add("80 BPM");
-        bpmList.add("100 BPM");
-        bpmList.add("120 BPM");
+
+        bpmList.add(Metronome.bpm80);
+        bpmList.add(Metronome.bpm100);
+        bpmList.add(Metronome.bpm120);
+        bpmList.add(Metronome.bpm140);
+
         ArrayAdapter<String> bpmAdapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, bpmList);
         bpmSpinner.setAdapter(bpmAdapter);
         bpmSpinner.setPrompt("100 BPM");

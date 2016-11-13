@@ -132,6 +132,8 @@ public class MeasureDataRequest {
         this.age=measureSettings.getAge();
         this.desiredBPM=measureSettings.getDesiredBPM();
         this.hand=measureSettings.getHand();
+        this.tired=measureSettings.getTired();
+        this.position=measureSettings.getPosition();
         this.finger=measureSettings.getFinger();
         this.gender=measureSettings.getGender();
         //@TODO - uzupełnić
