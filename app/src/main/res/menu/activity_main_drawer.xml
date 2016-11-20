@@ -3,17 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="O aplikacji" />
-        <item
             android:id="@+id/nav_measurement"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Pomiar" />
+            android:title="Measurement" />
+        <!--<item-->
+            <!--android:id="@+id/nav_my"-->
+            <!--android:icon="@drawable/ic_menu_slideshow"-->
+            <!--android:title="My measurements" />-->
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Moje wyniki" />
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="About" />
+        <item
+            android:id="@+id/app_close"
+            android:icon="@drawable/common_google_signin_btn_icon_light_disabled"
+            android:title="Exit"/>
     </group>
 
 </menu>

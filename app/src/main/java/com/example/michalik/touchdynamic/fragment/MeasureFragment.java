@@ -172,7 +172,6 @@ public class MeasureFragment extends Fragment{
 
     private void endAccelerometerService(){
         accelerometerService.uinit();
-
     }
 
     private void saveData(List<TouchMeasurement> touchMeasurementList, List<AccelerometerMeasurement> accelerometerMeasurementList) throws Exception{
@@ -192,6 +191,14 @@ public class MeasureFragment extends Fragment{
                         }
                         if(file.getName().contains("touch")){
                             measureDataRequest.setTouchURL(msg);
+                        }
+                        if(measureDataRequest.getTouchURL()!=null && measureDataRequest.getAccURL()!=null){
+                            try{
+                                sendData();
+                            }
+                            catch (Exception e){
+                                Log.d(TAG, "onSuccess: ", e);
+                            }
                         }
 
                     }

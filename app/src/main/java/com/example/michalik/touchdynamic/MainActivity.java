@@ -15,6 +15,7 @@ import android.view.MenuItem;
 
 import com.example.michalik.touchdynamic.fragment.AboutFragment;
 import com.example.michalik.touchdynamic.fragment.MeasureFragment;
+import com.example.michalik.touchdynamic.fragment.MyMeasurementsFragment;
 import com.example.michalik.touchdynamic.fragment.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -85,6 +86,14 @@ public class MainActivity extends AppCompatActivity
                 fragmentManager.beginTransaction()
                         .replace(R.id.content_main, new MeasureFragment())
                         .commit();
+                break;
+//            case R.id.nav_my:
+//                fragmentManager.beginTransaction()
+//                        .replace(R.id.content_main, new MyMeasurementsFragment())
+//                        .commit();
+//                break;
+            case R.id.app_close:
+                finish();
                 break;
         }
 
